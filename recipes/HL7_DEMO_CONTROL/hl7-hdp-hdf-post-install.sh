@@ -846,35 +846,6 @@ else
        	echo "*********************************STREAMLINE Service Started..."
 fi
 
-sleep 2
-installNifiService
-
-sleep 2
-NIFI_STATUS=$(getServiceStatus NIFI)
-echo "*********************************Checking NIFI status..."
-if ! [[ $NIFI_STATUS == STARTED || $NIFI_STATUS == INSTALLED ]]; then
-        echo "*********************************NIFI is in a transitional state, waiting..."
-        waitForService NIFI
-        echo "*********************************NIFI has entered a ready state..."
-fi
-
-if [[ $NIFI_STATUS == INSTALLED ]]; then
-        startService NIFI
-else
-        echo "*********************************NIFI Service Started..."
-fi
-
-echo "***************************************** RUN NIF AS ROOT instead of NIFI... "
-#sed -i "s/##run.as=root/run.as=root/"  /usr/hdf/current/nifi/conf/bootstrap.conf
-#sed -i "s/run.as=nifi/#run.as=nifi/"  /usr/hdf/current/nifi/conf/bootstrap.conf
-waitForNifiServlet
-
-
-echo "*********************************Deploying NIFI Template..."
-deployTemplateToNifi
-
-echo "*********************************Starting NIFI Flow ..."
-startNifiFlow
 yum install -y lucidworks-hdpsearch
 #sudo -u hdfs hadoop fs -mkdir /user/solr
 #sudo -u hdfs hadoop fs -chown solr /user/solr
@@ -924,6 +895,37 @@ ntpdate pool.ntp.org
 service ntpd start
 cd
 
+sleep 2
+installNifiService
+
+sleep 2
+NIFI_STATUS=$(getServiceStatus NIFI)
+echo "*********************************Checking NIFI status..."
+if ! [[ $NIFI_STATUS == STARTED || $NIFI_STATUS == INSTALLED ]]; then
+        echo "*********************************NIFI is in a transitional state, waiting..."
+        waitForService NIFI
+        echo "*********************************NIFI has entered a ready state..."
+fi
+
+if [[ $NIFI_STATUS == INSTALLED ]]; then
+        startService NIFI
+else
+        echo "*********************************NIFI Service Started..."
+fi
+
+echo "***************************************** RUN NIF AS ROOT instead of NIFI... "
+#sed -i "s/##run.as=root/run.as=root/"  /usr/hdf/current/nifi/conf/bootstrap.conf
+#sed -i "s/run.as=nifi/#run.as=nifi/"  /usr/hdf/current/nifi/conf/bootstrap.conf
+waitForNifiServlet
+
+
+echo "*********************************Deploying NIFI Template..."
+deployTemplateToNifi
+
+echo "*********************************Starting NIFI Flow ..."
+startNifiFlow
+
+exit 0
 
 
 
